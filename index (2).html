@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Proyek Offline</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Laporan Proyek</h1>
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Sheet</th>
+                <th>Purpose</th>
+                <th>Description</th>
+                <th>Additions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Fungsi untuk memuat data dari JSON dan menampilkan di tabel
+        async function loadReportData() {
+            const response = await fetch('data.json');
+            const data = await response.json();
+            const tableBody = document.getElementById('reportTable').querySelector('tbody');
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.Sheet || '-'}</td>
+                    <td>${row.Purpose || '-'}</td>
+                    <td>${row.Desc || '-'}</td>
+                    <td>${row.Additions || '-'}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // Memuat data saat halaman dibuka
+        loadReportData();
+
+        // Service Worker untuk akses offline
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registered.', reg))
+                    .catch(err => console.log('Service Worker registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
